@@ -1,0 +1,142 @@
+grid=(0 0 0 0 0 0 0 0 0)
+
+to_play=1
+row=0
+column=0
+full=0
+finished=0
+winning=0
+ok_to_put=0
+
+print_grid() {
+	grid_to_plot=(" " " " " " " " " " " " " " " " " ")
+	for i in {0..8}
+	do
+		if ((${grid[i]}==1))
+		then
+			grid_to_plot[i]="o"
+		elif ((${grid[i]}==-1))
+		then
+			grid_to_plot[i]="x"
+		fi
+	done  
+	echo "-------------"
+	echo "| ${grid_to_plot[0]} | ${grid_to_plot[1]} | ${grid_to_plot[2]} |"
+	echo "-------------"
+	echo "| ${grid_to_plot[3]} | ${grid_to_plot[4]} | ${grid_to_plot[5]} |"
+	echo "-------------"
+	echo "| ${grid_to_plot[6]} | ${grid_to_plot[7]} | ${grid_to_plot[8]} |"
+	echo "-------------"
+}
+
+get_input() {
+	echo "Player $to_play:"
+	echo "Enter a row then a column:"
+	read row
+	read column
+}
+
+is_ok_to_put() {
+	if (($row>2))||(($row<0))||(($column>2))||(($column<0))
+	then
+		ok_to_put=0
+		return 0
+	fi
+	if ((${grid[$(($row*3+$column))]}!=0))
+	then
+		ok_to_put=0
+		return 0
+	fi
+	ok_to_put=1
+}
+
+is_full() {
+	for r in 0 1 2
+	do
+		for c in 0 1 2 
+		do
+			if ((${grid[$((3*r+c))]}==0))
+			then
+				full=0
+				return 0
+			fi
+		done
+	done
+	full=1
+}
+
+is_winning() {
+	s1=$((${grid[0]} + ${grid[1]}+ ${grid[2]}))
+	if (( s1==$(($to_play * 3)) ))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[3]} + ${grid[4]} + ${grid[5]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[6]} + ${grid[7]} + ${grid[8]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[0]} + ${grid[4]} + ${grid[8]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[0]} + ${grid[3]} + ${grid[6]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[1]} + ${grid[4]} + ${grid[7]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[2]} + ${grid[5]} + ${grid[8]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+	s1=$((${grid[6]} + ${grid[4]} + ${grid[2]}))
+	if ((s1==$(($to_play * 3))))
+	then
+		winning=$to_play
+	fi
+}
+
+echo "Welcome to a game of... Tic-Tac-Toe !!!"
+echo "You know the rules, let's go !"
+print_grid
+
+
+while (($finished != 1))
+do
+	get_input
+	is_ok_to_put
+	while (($ok_to_put!=1))
+	do 
+		echo "This doesn't work. Try again. Remember we're using 0-indexing."
+		get_input
+		is_ok_to_put
+	done
+	grid[$((3*row+column))]=$to_play
+	echo "New grid:"
+	print_grid
+	is_winning
+	if (($winning==$to_play))
+	then
+		echo "Player $to_play won!"
+		finished=1
+	fi
+	is_full
+	if (($full==1)) 
+	then
+		echo "Draw."
+		finished=1
+	fi
+	to_play=$(($to_play*(-1)))
+done
