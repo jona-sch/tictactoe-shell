@@ -127,16 +127,17 @@ do
 	echo "New grid:"
 	print_grid
 	is_winning
+	is_full
 	if (($winning==$to_play))
 	then
 		echo "Player $to_play won!"
 		finished=1
-	fi
-	is_full
-	if (($full==1)) 
+	elif (($full==1)) 
 	then
 		echo "Draw."
 		finished=1
 	fi
 	to_play=$(($to_play*(-1)))
 done
+
+echo "That was a good game."
