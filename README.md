@@ -1,5 +1,5 @@
 # tictactoe-shell
-Shell implementation of the infamous Tic-Tac-Toe game.
+Shell implementation of the famous Tic-Tac-Toe game.
 
 ## How to use
 
